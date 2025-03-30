@@ -10,7 +10,7 @@ ENV CATALINA_BASE /usr/local/tomcat
 COPY target/website-v2.war $CATALINA_HOME/webapps/website-v2.war
 
 # Expose the default Tomcat port
-EXPOSE 8080
+EXPOSE 8082
 
 # Start Tomcat server in foreground mode
 CMD ["catalina.sh", "run"]
