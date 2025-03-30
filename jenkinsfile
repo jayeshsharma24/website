@@ -28,5 +28,12 @@ pipeline {
                 """
             }
         }
+        stage('fourth-stage') {
+            steps {
+                sh """
+                    echo 'fourth stage'
+                """
+            }
+        }
     }
 }
