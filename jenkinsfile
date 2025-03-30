@@ -39,7 +39,7 @@ pipeline {
                     sh "trivy fs --format json --output ${TRIVY_REPORT} ${WAR_FILE}"
 
                     // Optional: Print the Trivy scan report to the console
-                    sh "cat ${TRIVY_REPORT}"
+                    //sh "cat ${TRIVY_REPORT}"
 
                     // Read the scan report
                     def scanReport = readJSON file: "${TRIVY_REPORT}"
