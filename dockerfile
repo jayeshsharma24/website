@@ -1,19 +1,16 @@
-# Use the official Ubuntu image as the base image
-FROM tomcat:latest
+# Use official Tomcat image from Docker Hub
+FROM tomcat:9-jdk11-openjdk
 
-# Install Apache and other required utilities
-RUN apt-get update && \
-    apt-get install -y wget openjdk-11-jdk && \
-    apt-get clean
+# Set environment variables (optional)
+ENV CATALINA_HOME /usr/local/tomcat
+ENV CATALINA_BASE /usr/local/tomcat
 
-# Set the working directory to /var/www/html (default for Apache)
-WORKDIR /var/www/html
+# Copy the WAR file into the Tomcat webapps directory
+# Make sure the path to your WAR file is correct (adjust the path if necessary)
+COPY target/website-v2.war $CATALINA_HOME/webapps/website-v2.war
 
-# Copy the WAR file from the Jenkins workspace to the Apache web server directory
-COPY target/website-v2.war /var/www/html/
+# Expose the default Tomcat port
+EXPOSE 8080
 
-# Expose the default HTTP port (80)
-EXPOSE 80
-
-# Start the Apache server
-CMD ["apachectl", "-D", "FOREGROUND"]
+# Start Tomcat server in foreground mode
+CMD ["catalina.sh", "run"]
