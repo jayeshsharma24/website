@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: "Environment", defaultValue: "dev", description: "provide environment parameters")
+        choice(name: "selection", choices: ["build", "test", "deploy"], description: "this is the choice parameters")
+    }
+    stages {
+        stage('first-stage') {
+            steps {
+                script {
+                    if (params.selection == "build") {
+                        println("executing the first build")
+                    }
+                }
+            }
+        }
+        stage('second-stage') {
+            steps {
+                sh """
+                    echo 'second stage'
+                """
+            }
+        }
+    }
+}
