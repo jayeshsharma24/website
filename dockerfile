@@ -1,15 +1,10 @@
 # Use the official Ubuntu image as the base image
-FROM ubuntu:latest
+FROM tomcat:latest
 
 # Install Apache and other required utilities
 RUN apt-get update && \
-    apt-get install -y apache2 wget openjdk-11-jdk && \
+    apt-get install -y wget openjdk-11-jdk && \
     apt-get clean
-
-# Enable Apache mod_proxy and mod_proxy_ajp modules (necessary for WAR deployment)
-RUN a2enmod proxy && \
-    a2enmod proxy_ajp && \
-    a2enmod rewrite
 
 # Set the working directory to /var/www/html (default for Apache)
 WORKDIR /var/www/html
