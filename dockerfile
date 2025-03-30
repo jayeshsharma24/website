@@ -5,7 +5,7 @@ FROM tomcat:9-jdk11
 ENV TOMCAT_HOME /usr/local/tomcat
 
 # Copy your WAR file into Tomcat's webapps directory
-COPY target/website-v2.war ${TOMCAT_HOME}/webapps/
+COPY target/website-v2.war ${TOMCAT_HOME}/webapps/ROOT.war
 
 # Expose Tomcat's default HTTP port
 EXPOSE 8080
