@@ -7,7 +7,7 @@ pipeline {
       environment {
         DOCKER_IMAGE_NAME = "jayeshsharma24/website-project"  // Name for your Docker image
         WAR_FILE_PATH = "target/website-v2.war"      // Path to the WAR file
-        DOCKERHUB_CREDENTIALS=credentials("dockerhub")
+        DOCKERHUB_CREDENTIALS=credentials("docker")
     }
 
     stages {
