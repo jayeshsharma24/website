@@ -47,11 +47,12 @@ pipeline {
         }
         
 
-      stage('third-stage') {
+      stage('docker cleanup') {
             steps {
                 sh """
-                    echo 'third stage stage'
+                    echo '______________________________deleting all containers_________________________'
                 """
+                sh 'docker system prune -f'
             }
         }
         stage('fourth-stage') {
