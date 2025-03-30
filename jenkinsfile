@@ -1,6 +1,14 @@
 pipeline {
     agent any
-   
+    tools {
+        jdk "JDK21"
+        maven "MAVEN3.9"
+    }
+    environment {
+        // Define your Trivy scan report location
+        TRIVY_REPORT = "trivy-report.json"
+        WAR_FILE = "target/website-v2.war" // Path to your WAR file
+    }
     stages {
         stage('Git checkout') {
             steps {
@@ -23,6 +31,24 @@ pipeline {
         
 
             }
+
+        stage('Trivy Scan - WAR File') {
+            steps {
+                script {
+                    // Run Trivy scan on the WAR file
+                    sh "trivy fs --format json --output ${TRIVY_REPORT} ${WAR_FILE}"
+
+                    // Optional: Print the Trivy scan report to the console
+                    sh "cat ${TRIVY_REPORT}"
+
+                    // Optional: Fail the build if vulnerabilities are found
+                    def scanReport = readJSON file: "${TRIVY_REPORT}"
+                    if (scanReport.vulnerabilities) {
+                        error "Vulnerabilities found in ${WAR_FILE}! Check the Trivy scan report for details."
+                    }
+                }
+            }
+        } 
         
       stage('third-stage') {
             steps {
