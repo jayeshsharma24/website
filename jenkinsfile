@@ -8,6 +8,7 @@ pipeline {
         DOCKER_IMAGE_NAME = "jayeshsharma2410/website-project"  // Name for your Docker image
         WAR_FILE_PATH = "target/website-v2.war"      // Path to the WAR file
         //DOCKERHUB_CREDENTIALS=credentials("docker")
+        TAG = "${BUILD_NUMBER}"  // Use Jenkins build number as tag
     }
 
     stages {
@@ -60,18 +61,28 @@ pipeline {
             }
         }
     }
+ stage('pushing to docker repository') {
+            steps {
+                sh """
+                    echo 'docker image pushing to docker remote repository'
+                """
+                sh 'docker push $DOCKER_IMAGE_NAME:$TAG'
+            }
+        }
       stage('docker cleanup') {
             steps {
                 sh """
                     echo '______________________________deleting all containers_________________________'
                 """
-                sh 'docker system prune -f'
+            sh 'docker stop $(docker ps -q)'
+            sh 'docker rm $(docker ps -a -q)'
+            sh 'docker system prune -f'
             }
         }
         stage('fourth-stage') {
             steps {
                 sh """
-                    echo ''
+                    echo '___________________________thanks for using this jenkins pipeline_____________________'
                 """
             }
         }
