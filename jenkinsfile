@@ -4,11 +4,11 @@ pipeline {
         jdk "JDK21"
         maven "MAVEN3.9"
     }
-    environment {
-        // Define your Trivy scan report location
-        TRIVY_REPORT = "trivy-report.json"
-        WAR_FILE = "target/website-v2.war" // Path to your WAR file
+      environment {
+        DOCKER_IMAGE_NAME = "jayeshsharma24/website-project"  // Name for your Docker image
+        WAR_FILE_PATH = "target/website-v2.war"      // Path to the WAR file
     }
+
     stages {
         stage('Git checkout') {
             steps {
@@ -28,31 +28,25 @@ pipeline {
                     archiveArtifacts artifacts: '**/target/*.war'
                 }
             }
-        
-
-            }
-
-        stage('Trivy Scan - WAR File') {
+        }
+            stage('Build Docker Image') {
             steps {
                 script {
-                    // Run Trivy scan on the WAR file
-                    sh "trivy fs --format json --output ${TRIVY_REPORT} ${WAR_FILE}"
-
-                    // Optional: Print the Trivy scan report to the console
-                    //sh "cat ${TRIVY_REPORT}"
-
-                    // Read the scan report
-                    def scanReport = readJSON file: "${TRIVY_REPORT}"
-
-                    // Check if vulnerabilities are found but don't fail the build
-                    if (scanReport.vulnerabilities) {
-                        echo "Vulnerabilities found in ${WAR_FILE}. Check the Trivy report for details."
-                    } else {
-                        echo "No vulnerabilities found in ${WAR_FILE}."
-                    }
+                    // Build Docker image using the Dockerfile
+                    sh "docker build -t ${DOCKER_IMAGE_NAME} ."
                 }
             }
         }
+          stage('Run Docker Container') {
+            steps {
+                script {
+                    // Run the Docker container in detached mode and map ports
+                    sh "docker run -d -p 8081:80 ${DOCKER_IMAGE_NAME}"
+                }
+            }
+        }
+        
+
       stage('third-stage') {
             steps {
                 sh """
