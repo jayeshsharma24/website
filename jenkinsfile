@@ -1,26 +1,29 @@
 pipeline {
     agent any
-    parameters {
-        string(name: "Environment", defaultValue: "dev", description: "provide environment parameters")
-        choice(name: "selection", choices: ["build", "test", "deploy"], description: "this is the choice parameters")
-    }
+   
     stages {
-        stage('first-stage') {
+        stage('Git checkout') {
             steps {
-                script {
-                    if (params.selection == "build") {
-                        println("executing the first build")
-                    }
-                }
+                git branch: 'web', url: 'https://github.com/jayeshsharma24/website.git'
             }
         }
-        stage('second-stage') {
+        stage('Build') {
             steps {
                 sh """
-                    echo 'second stage'
-                """
+                    echo '--------------------building stage--------------------'
+                                   """
+                sh 'mvn clean install -DskipTests'
             }
-        }
+            post {
+                success {
+                    echo 'Now Archiving...'
+                    archiveArtifacts artifacts: '**/target/*.war'
+                }
+            }
+        
+
+            }
+        
       stage('third-stage') {
             steps {
                 sh """
@@ -31,7 +34,7 @@ pipeline {
         stage('fourth-stage') {
             steps {
                 sh """
-                    echo 'fourth stage'
+                    echo ''
                 """
             }
         }
