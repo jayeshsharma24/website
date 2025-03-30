@@ -7,7 +7,7 @@ pipeline {
       environment {
         DOCKER_IMAGE_NAME = "jayeshsharma2410/website-project"  // Name for your Docker image
         WAR_FILE_PATH = "target/website-v2.war"      // Path to the WAR file
-        DOCKERHUB_CREDENTIALS=credentials("docker")
+        //DOCKERHUB_CREDENTIALS=credentials("docker")
     }
 
     stages {
@@ -49,14 +49,14 @@ pipeline {
         
  stage("Docker Login") {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR')])
-                {
-                  sh """
-                    echo "------------ Login to DockerHub ------------"
-                     docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
-                    echo "------------ Successfully Logedin ------------"
-                  """
-                }
+               script {
+                    withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        echo "Logging into DockerHub"
+                        // Use echo to securely pass password to Docker login command
+                        sh '''
+                            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                        '''
+                    }
             }
         }
       stage('docker cleanup') {
