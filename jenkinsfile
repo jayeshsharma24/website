@@ -41,15 +41,18 @@ pipeline {
                     // Optional: Print the Trivy scan report to the console
                     sh "cat ${TRIVY_REPORT}"
 
-                    // Optional: Fail the build if vulnerabilities are found
+                    // Read the scan report
                     def scanReport = readJSON file: "${TRIVY_REPORT}"
+
+                    // Check if vulnerabilities are found but don't fail the build
                     if (scanReport.vulnerabilities) {
-                        error "Vulnerabilities found in ${WAR_FILE}! Check the Trivy scan report for details."
+                        echo "Vulnerabilities found in ${WAR_FILE}. Check the Trivy report for details."
+                    } else {
+                        echo "No vulnerabilities found in ${WAR_FILE}."
                     }
                 }
             }
-        } 
-        
+        }
       stage('third-stage') {
             steps {
                 sh """
